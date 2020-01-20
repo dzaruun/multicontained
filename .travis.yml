@@ -20,7 +20,7 @@ after_success:
    - docker build -t dzaruun/composite-master ./webserver
    - docker build -t dzaruun/composite-calc ./calculator
    # Log in to the docker CLI
-   - echo "$DOCKER_PASS" | locker login -u "$DOCKER_ID" --password-stdin
+   - echo "$DOCKER_PASS" | docker login -u "$DOCKER_ID" --password-stdin
    # Push the built images to the Docker Hub
    - docker push dzaruun/composite-frontend
    - docker push dzaruun/composite-nginx
