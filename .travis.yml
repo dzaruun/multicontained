@@ -1,0 +1,28 @@
+sudo: required
+services:
+    - docker
+
+# build the development image first for testing
+# use the synthetic tag to refer later - used internally only, here
+before_install:
+    - docker build -t dzaruun/testreactpart -f ./frontend/Dockerfile.dev ./frontend
+
+# run the whatever tests on the synthetic tag dev image
+# just for the react app for the mo
+script:
+  - docker run -e CI=true dzaruun/testreactpart npm test
+
+# now build all the own images, tag for production as well, watch the context
+# context is not . (current dir) any longer
+after_success:
+   - docker build -t dzaruun/composite-frontend ./frontend
+   - docker build -t dzaruun/composite-nginx ./nginx
+   - docker build -t dzaruun/composite-master ./webserver
+   - docker build -t dzaruun/composite-calc ./calculator
+   # Log in to the docker CLI
+   - echo "$DOCKER_PASS" | locker login -u "$DOCKER_ID" --password-stdin
+   # Push the built images to the Docker Hub
+   - docker push dzaruun/composite-frontend
+   - docker push dzaruun/composite-nginx
+   - docker push dzaruun/composite-master
+   - docker push dzaruun/composite-calc 
