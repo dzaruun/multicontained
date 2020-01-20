@@ -1,0 +1,47 @@
+version: "3.7"
+services: 
+  databasevm: 
+    image: 'postgres:latest' 
+  buffervm: 
+    image: 'redis:latest' 
+  preprocessor: 
+    restart: always 
+    build: 
+      dockerfile: Dockerfile.dev 
+      context: ./nginx 
+    ports: 
+      - '3050:80' 
+  nodeserver: 
+    build: 
+      dockerfile: Dockerfile.dev 
+      context: ./webserver 
+    depends_on: 
+      - databasevm
+    volumes: 
+      - /app/node_modules 
+      - ./webserver:/app 
+    environment: 
+      - REDIS_HOST=buffervm 
+      - REDIS_PORT=6379 
+      - PGUSER=postgres 
+      - PGHOST=databasevm 
+      - PGDATABASE=postgres 
+      - PGPASSWORD=postgres_password 
+      - PGPORT=5432 
+  calculatorvm: 
+    environment: 
+      - REDIS_HOST=buffervm 
+      - REDIS_PORT=6379 
+    build: 
+      dockerfile: Dockerfile.dev 
+      context: ./calculator 
+    volumes: 
+      - /app/node_modules 
+      - ./calculator:/app 
+  frontendvm: 
+    build: 
+      dockerfile: Dockerfile.dev 
+      context: ./frontend 
+    volumes: 
+      - /app/node_modules 
+      - ./frontend:/app 
