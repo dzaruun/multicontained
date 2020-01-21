@@ -26,3 +26,14 @@ after_success:
    - docker push dzaruun/composite-nginx
    - docker push dzaruun/composite-master
    - docker push dzaruun/composite-calc 
+deploy: 
+  provider: elasticbeanstalk 
+  region: "eu-west-1" 
+  app: "composite-fib" 
+  env: "CompositeFib-env" 
+  bucket_name: "elasticbeanstalk-eu-west-1-101951319944" 
+  bucket_path: "compositefibpath" 
+  on:
+    branch: master 
+  access_key_id: $AWS_ACCESS_KEY 
+  secret_access_key: $AWS_SECRET_KEY

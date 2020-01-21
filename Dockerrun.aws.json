@@ -1,0 +1,36 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+      {
+        "name": "reactfrontend",
+        "image": "dzaruun/composite-frontend",
+        "hostname": "reacthost",
+        "essential": false,
+        "memory": 128
+      },
+      {
+        "name": "nodemanager",
+        "image": "dzaruun/composite-master",
+        "hostname": "express",
+        "essential": false,
+        "memory": 128
+      },
+      {
+        "name": "fibcalculator",
+        "image": "dzaruun/composite-calc",
+        "hostname": "fibcalc",
+        "essential": false,
+        "memory": 128
+      },
+      {
+        "name": "nginx",
+        "image": "dzaruun/composite-nginx",
+        "essential": true,
+        "portMappings": [
+          { "hostPort": 80, "containerPort":80 }
+        ],
+        "links": ["reactfrontend", "nodemanager"],
+        "memory": 128
+      }
+  ]
+}
